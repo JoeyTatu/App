@@ -12,6 +12,7 @@ package com.example.x15011071.audioacousticassistant_app;
  */
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,7 @@ public class RecordActivity extends AppCompatActivity {
                     {
                         try
                         {
-                            Thread.sleep(1000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) { };
                         mHandler.post(updater);
                     }
@@ -68,8 +69,13 @@ public class RecordActivity extends AppCompatActivity {
             };
             runner.start();
         }
-
-        FILE = Environment.getExternalStorageState() + "/tempRecord.3gpp"; //@reference YouTube
+        if (Build.VERSION.SDK_INT >=10){
+            FILE = Environment.getExternalStorageState() + "/tempRecord.m4a";
+        }
+        else {
+            FILE = Environment.getExternalStorageState() + "/tempRecord.3gpp";
+        }
+        //@reference YouTube
         infoTV = (TextView)findViewById(R.id.infoTV);
         recordBtn = (Button)findViewById(R.id.recordBtn);
         recordBtn.setOnClickListener(new View.OnClickListener() {
@@ -127,16 +133,27 @@ public class RecordActivity extends AppCompatActivity {
 
         record = new MediaRecorder();
         record.setAudioSource(MediaRecorder.AudioSource.MIC);
-        record.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        record.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        record.setOutputFile(FILE);
+        if (Build.VERSION.SDK_INT >=10){
+            record.setAudioSamplingRate(44100);
+            record.setAudioEncodingBitRate(96000);
+            record.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            record.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        }
+        else {
+            record.setAudioSamplingRate(8000);
+            record.setAudioEncodingBitRate(12200);
+            record.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            record.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+        }
+
+        record.setOutputFile(fileOut.getAbsolutePath());
 
         try {
             record.prepare();
         }
-        catch (java.io.IOException f){
-            f.printStackTrace();
+        catch (IOException f){
+            throw new RuntimeException(f);
         }
         record.start();
 
