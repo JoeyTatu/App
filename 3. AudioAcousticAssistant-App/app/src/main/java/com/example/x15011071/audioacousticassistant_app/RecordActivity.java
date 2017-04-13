@@ -69,7 +69,7 @@ public class RecordActivity extends AppCompatActivity {
             };
             runner.start();
         }
-        if (Build.VERSION.SDK_INT >=10){
+        if (Build.VERSION.SDK_INT >=15){
             FILE = Environment.getExternalStorageState() + "/tempRecord.m4a";
         }
         else {
@@ -127,13 +127,13 @@ public class RecordActivity extends AppCompatActivity {
 
         File fileOut = new File(FILE);
 
-        if(fileOut != null){
-            fileOut.delete();
-        }
+     //   if (fileOut != null) { //fileOut != null is ignored "alwways returns true"
+     //       fileOut.delete();
+     //   }
 
         record = new MediaRecorder();
         record.setAudioSource(MediaRecorder.AudioSource.MIC);
-        if (Build.VERSION.SDK_INT >=10){
+        if (Build.VERSION.SDK_INT >=15){
             record.setAudioSamplingRate(44100);
             record.setAudioEncodingBitRate(96000);
             record.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -180,8 +180,8 @@ public class RecordActivity extends AppCompatActivity {
     public double getAmplitudeEMA() {
         double amp =  getAmplitude();
         double result = getAmplitude();
-       // maxAverage = (AVERAGE_FILTER * amp) + ((1.0 - AVERAGE_FILTER) * maxAverage);
-       // result = 20 * Math.log10(maxAverage / amp);
+        maxAverage = (AVERAGE_FILTER * amp) + ((1.0 - AVERAGE_FILTER) * maxAverage);
+        result = 20 * Math.log10(maxAverage / amp);
         return result;
     }
 
